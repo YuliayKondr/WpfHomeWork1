@@ -9,9 +9,27 @@
         ResizeMode="NoResize">
     <Grid>
         <StackPanel Orientation="Vertical">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock FontSize="14"
+                           Margin="2"
+                           VerticalAlignment="Center"
+                           >Введіть кількість співробітників</TextBlock>
+                <TextBox x:Name="CountInput"
+                         Width="150"
+                         Background="LightGray"
+                         FontSize="14"
+                         TextAlignment="Right"
+                         VerticalAlignment="Center"
+                         Margin="10,0,10,0"/>
+                <Button Content="завантажити"
+                        Padding="5,2,5,2"
+                        VerticalAlignment="Center"
+                        Background="LightBlue"
+                        Click="Load_Click"/>
+            </WrapPanel>            
             <ListBox Name="ListEmployees"
                      Margin="10,5,10,5"
-                     Height="500"
+                     Height="450"
                      Background="LightGray"
                      ScrollViewer.VerticalScrollBarVisibility="Visible">
                 <ListBox.ItemTemplate>

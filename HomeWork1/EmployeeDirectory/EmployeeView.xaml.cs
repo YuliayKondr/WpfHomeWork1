@@ -33,7 +33,7 @@ namespace HomeWork1.EmployeeDirectory
         {
             if (EmployeeId.HasValue)
             {
-                _currentEmployee = Employees.GetEmployeeById(EmployeeId.Value);
+                _currentEmployee = EmployeesSaveHalper.GetEmployeeById(EmployeeId.Value);
 
                 if (_currentEmployee == null)
                 {
