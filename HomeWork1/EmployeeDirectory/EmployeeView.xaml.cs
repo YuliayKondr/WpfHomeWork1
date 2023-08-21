@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DatabaseModel.Models;
+using DatabaseModel.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,24 +23,38 @@ namespace HomeWork1.EmployeeDirectory
     /// </summary>
     public partial class EmployeeView : Window
     {
+        private readonly IRepository<EmployeeEntity> _repository;
+        private readonly IRepository<AddressEntity> _addressRepository;
+        private readonly IRepository<SubscriptionEntity> _subscriptionRepository;
+
         public int? EmployeeId { private get; set; }
 
-        private EmployeeDto? _currentEmployee;
+        private EmployeeEntity? _currentEmployee;
+        private AddressEntity? _currentAddress;
+        private SubscriptionEntity? _currentSubscription;
 
-        public EmployeeView()
+        public EmployeeView(
+            IRepository<EmployeeEntity> repository,
+            IRepository<AddressEntity> addressRepository,
+            IRepository<SubscriptionEntity> subscriptionRepository)
         {
+            _repository = repository;
+            _addressRepository = addressRepository;
+            _subscriptionRepository = subscriptionRepository;
+
             InitializeComponent();            
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (EmployeeId.HasValue)
-            {
-                _currentEmployee = EmployeesSaveHalper.GetEmployeeById(EmployeeId.Value);
+            {                
+                await InitializeFromDatabaseAsync(EmployeeId.Value);
+                
 
-                if (_currentEmployee == null)
+                if (_currentEmployee == null || _currentSubscription == null || _currentAddress== null)
                 {
-                    MessageBox.Show("Співробітник не знайден", "Попередження", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Не всі компаненти знайдені в базі", "Попередження", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                     return;
                 }
@@ -47,10 +64,10 @@ namespace HomeWork1.EmployeeDirectory
                 EmailTextBlock.Text = _currentEmployee.Email;
                 GenderTextBlock.Text = _currentEmployee.Gender;
 
-                CountryTextBlock.Text = _currentEmployee.Address.Country;
-                CityTextBlock.Text = _currentEmployee.Address.City;
-                StreetNameTextBlock.Text = _currentEmployee.Address.StreetName;
-                StreetAddressTextBlock.Text = _currentEmployee.Address.StreetAddress;
+                CountryTextBlock.Text = _currentAddress.Country;
+                CityTextBlock.Text = _currentAddress.City;
+                StreetNameTextBlock.Text = _currentAddress.StreetName;
+                StreetAddressTextBlock.Text = _currentAddress.StreetAddress;
                 PhoneNumerTextBlock.Text = _currentEmployee.PhoneNumer;
 
                 TitleTextBlock.Text = _currentEmployee.Employment.Title;
@@ -59,10 +76,10 @@ namespace HomeWork1.EmployeeDirectory
                 CcNumberTextBlock.Text = _currentEmployee.CreditCard.CcNumber;
 
                 UsernameTextBlock.Text = _currentEmployee.Username;
-                StatusTextBlock.Text = _currentEmployee.Subscription.Status;
-                PlanTextBlock.Text = _currentEmployee.Subscription.Plan;
-                PaymentMethodTextBlock.Text = _currentEmployee.Subscription.PaymentMethod;
-                TermTextBlock.Text = _currentEmployee.Subscription.Term;
+                StatusTextBlock.Text = _currentSubscription.Status;
+                PlanTextBlock.Text = _currentSubscription.Plan;
+                PaymentMethodTextBlock.Text = _currentSubscription.PaymentMethod;
+                TermTextBlock.Text = _currentSubscription.Term;
 
                 Foto.Source = new BitmapImage(new Uri(_currentEmployee.Avatar));
             }
@@ -71,6 +88,35 @@ namespace HomeWork1.EmployeeDirectory
         private void ButtonClickClose(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private async Task InitializeFromDatabaseAsync(int employeeId)
+        {
+            try
+            {
+                Task<EmployeeEntity> employeeEntityTask = GetEmployeeEntityAsync(employeeId);               
+
+                await employeeEntityTask;
+
+                _currentEmployee = employeeEntityTask.Result;
+                _currentAddress = _currentEmployee.Address;
+                _currentSubscription = _currentEmployee.Subscription;
+
+            }
+            catch (Exception ex)
+            {
+                //some do
+            }
+        }
+
+        private Task<EmployeeEntity> GetEmployeeEntityAsync(int employeeId)
+        {
+            return _repository
+                .Queryable()
+                .AsNoTracking()
+                .Include(x => x.Address)
+                .Include(x => x.Subscription)
+                .SingleOrDefaultAsync(x => x.Id == employeeId);
         }
     }
 }

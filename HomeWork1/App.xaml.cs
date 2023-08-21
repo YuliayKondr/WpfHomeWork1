@@ -10,10 +10,14 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RestEase.HttpClientFactory;
 using HomeWork1.Clients;
+using DatabaseModel;
+using DatabaseModel.Repositories;
+using HomeWork1.EmployeeDirectory;
 
 namespace HomeWork1
 {   
@@ -29,8 +33,10 @@ namespace HomeWork1
         {
             var builder = Host.CreateApplicationBuilder();
 
-            builder.Services.AddSingleton<MainWindow>();           
+            builder.Configuration.AddJsonFile("appsettings.json");
 
+            builder.Services.AddSingleton<MainWindow>();
+            
             builder.Services.AddRestEaseClient(new AddRestEaseClientOptions<IUsersApi>()
             {
                 RestClientConfigurer = client => client.ResponseDeserializer = new JsonResponseDeserializer()
@@ -42,6 +48,13 @@ namespace HomeWork1
             });
 
             builder.Services.AddSingleton<IEmployeeClient,  EmployeeClient>();
+
+            builder.Services.AddDbContext<MySqlContext>(
+            x => x.UseMySql(builder.Configuration.GetConnectionString("Main")!, new MySqlServerVersion(new Version(5, 7, 26))));
+            builder.Services.AddSingleton<IDataContext, MySqlContext>();
+            builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddSingleton(typeof(IRepository<>), typeof(EfCoreRepository<>));
+            builder.Services.AddAutoMapper(typeof(IClientAssemblyMarker).Assembly);
 
             _host = builder.Build();
         }

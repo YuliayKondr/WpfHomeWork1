@@ -1,23 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using TransferObjects.Employee;
 using HomeWork1.EmployeeDirectory;
-using System.Net.Http;
-using RestEase;
 using HomeWork1.Clients;
+using DatabaseModel;
+using DatabaseModel.Repositories;
+using DatabaseModel.Models;
+using AutoMapper;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace HomeWork1
 {
@@ -27,29 +21,54 @@ namespace HomeWork1
     public partial class MainWindow : Window
     {
         private readonly IEmployeeClient _employeeClient;
+        private readonly IRepository<EmployeeEntity> _userEntityRepository;
+        private readonly IRepository<AddressEntity> _addressRepository;
+        private readonly IRepository<SubscriptionEntity> _subscriptionRepository;
+        private readonly IUnitOfWork _unitOfWork1;
+        private readonly IMapper _mapper;
 
-        public MainWindow(IEmployeeClient employeeClient)
+        public MainWindow(
+            IEmployeeClient employeeClient,
+            IUnitOfWork unitOfWork,
+            IRepository<EmployeeEntity> userRepository,
+            IRepository<AddressEntity> addressRepository,
+            IRepository<SubscriptionEntity> subscriptionRepository,
+            IMapper mapper)
         {
             _employeeClient = employeeClient;
+            _unitOfWork1 = unitOfWork;
+            _userEntityRepository = userRepository;
+            _addressRepository = addressRepository;
+            _subscriptionRepository = subscriptionRepository;
+            _mapper = mapper;
 
             InitializeComponent();            
         }
 
         private async void ShowInfoEnployee(object sender, RoutedEventArgs e)
         {
-            if (ListEmployees.SelectedItem != null && ListEmployees.SelectedItem is EmployeeDto)
+            if (ListEmployees.SelectedItem != null && ListEmployees.SelectedItem is EmployeeEntity)
             {
-                EmployeeDto selectedEmployee = (EmployeeDto)ListEmployees.SelectedItem;
+                EmployeeEntity selectedEmployee = (EmployeeEntity)ListEmployees.SelectedItem;
 
-                EmployeeView employeeView = new EmployeeView();
+                EmployeeView employeeView = new EmployeeView(_userEntityRepository, _addressRepository, _subscriptionRepository);
 
                 employeeView.EmployeeId = selectedEmployee.Id;
 
                 employeeView.ShowDialog();
 
                 ListEmployees.SelectedItem = null;
-            }           
+            }
+            else
+            {
+                MessageBox.Show("Не вибраний об'єкт", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }        
+
+        private async Task<IReadOnlyCollection<EmployeeEntity>> GetEmployeesAsync()
+        {
+            return await _userEntityRepository.Queryable().ToArrayAsync();
+        }
 
         private async void Load_Click(object sender, RoutedEventArgs e)
         {    
@@ -63,25 +82,44 @@ namespace HomeWork1
             }
 
             try
-            {
-                List<EmployeeDto> employees = new List<EmployeeDto>();
+            {                
 
                 if(countEmployees == 1)
                 {
-                    EmployeeDto employee = await _employeeClient.GetEmployeeAsync();
+                    EmployeeDto employee = await _employeeClient.GetEmployeeAsync();                   
 
-                    employees.Add(employee);
+                    EmployeeEntity userEntity = _mapper.Map<EmployeeEntity> (employee);
+
+                    _userEntityRepository.Insert(userEntity);
+
+                    await _unitOfWork1.SaveChangesAsync(CancellationToken.None);
+
                 }
                 else
                 {
                     IReadOnlyCollection<EmployeeDto> employeesFromServer = await _employeeClient.GetEmployeesByCountAsync(countEmployees);
 
-                    employees.AddRange(employeesFromServer);
-                } 
+                    EmployeeEntity[] employeeEntities = employeesFromServer.Select(x => _mapper.Map<EmployeeEntity>(x)).ToArray();
+
+                    Array.ForEach(employeeEntities, x => _userEntityRepository.Insert(x));
+
+                    await _unitOfWork1.SaveChangesAsync(CancellationToken.None);                    
+                }   
                 
-                EmployeesSaveHalper.SetEmployees(employees);
-                
-                ListEmployees.ItemsSource = EmployeesSaveHalper.GetAllEmployees();
+                ListEmployees.ItemsSource = await GetEmployeesAsync();
+              
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ListEmployees.ItemsSource = await GetEmployeesAsync();
             }
             catch(Exception ex)
             {

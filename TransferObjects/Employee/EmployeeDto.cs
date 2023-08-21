@@ -35,7 +35,7 @@ namespace TransferObjects.Employee
         public string PhoneNumer { get; init; }
 
         [JsonProperty("social_insurance_number")]
-        public string SociaInsuranceNumber { get; init; }
+        public string SocialInsuranceNumber { get; init; }
 
         [JsonProperty("date_of_birth")]
         public DateTime DateOfBirth { get; init; }
