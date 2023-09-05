@@ -18,6 +18,7 @@ using HomeWork1.Clients;
 using DatabaseModel;
 using DatabaseModel.Repositories;
 using HomeWork1.EmployeeDirectory;
+using HomeWork1.ViewModels;
 
 namespace HomeWork1
 {   
@@ -33,10 +34,8 @@ namespace HomeWork1
         {
             var builder = Host.CreateApplicationBuilder();
 
-            builder.Configuration.AddJsonFile("appsettings.json");
+            builder.Configuration.AddJsonFile("appsettings.json");            
 
-            builder.Services.AddSingleton<MainWindow>();
-            
             builder.Services.AddRestEaseClient(new AddRestEaseClientOptions<IUsersApi>()
             {
                 RestClientConfigurer = client => client.ResponseDeserializer = new JsonResponseDeserializer()
@@ -55,6 +54,10 @@ namespace HomeWork1
             builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
             builder.Services.AddSingleton(typeof(IRepository<>), typeof(EfCoreRepository<>));
             builder.Services.AddAutoMapper(typeof(IClientAssemblyMarker).Assembly);
+
+            builder.Services.AddScoped<MainWindowViewModel>();
+
+            builder.Services.AddSingleton(sp => new MainWindow() { DataContext = sp.GetRequiredService<MainWindowViewModel>() });
 
             _host = builder.Build();
         }

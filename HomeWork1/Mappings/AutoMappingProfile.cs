@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DatabaseModel.Models;
+using HomeWork1.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,10 @@ namespace HomeWork1.Mappings
             CreateMap<CreditCardDto, CreditCard>();
 
             CreateMap<EmploymentDto, Employment>();
+
+            CreateMap<EmployeeEntity, EmployeeViewItem>()
+                .ForMember(x => x.Title, y => y.MapFrom(x => x.Employment.Title));
+
         }
     }
 }
