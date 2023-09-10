@@ -1,15 +1,7 @@
 ﻿using System;
 using RestEase;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Net.Http;
 using Microsoft.Extensions.Configuration;
-using System.Runtime.InteropServices.JavaScript;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,8 +9,9 @@ using RestEase.HttpClientFactory;
 using HomeWork1.Clients;
 using DatabaseModel;
 using DatabaseModel.Repositories;
-using HomeWork1.EmployeeDirectory;
 using HomeWork1.ViewModels;
+using HomeWork1.Views;
+using HomeWork1.AppCommon;
 
 namespace HomeWork1
 {   
@@ -55,9 +48,24 @@ namespace HomeWork1
             builder.Services.AddSingleton(typeof(IRepository<>), typeof(EfCoreRepository<>));
             builder.Services.AddAutoMapper(typeof(IClientAssemblyMarker).Assembly);
 
-            builder.Services.AddScoped<MainWindowViewModel>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>(
+                x =>
+                {
+                    var navigationService = new NavigationService(x);
+                    navigationService.Configure(nameof(MainWindow), typeof(MainWindow));
+                    navigationService.Configure(nameof(EmployeeView), typeof(EmployeeView));
+                    navigationService.Configure(nameof(EmployeeCreateView), typeof(EmployeeCreateView));
 
-            builder.Services.AddSingleton(sp => new MainWindow() { DataContext = sp.GetRequiredService<MainWindowViewModel>() });
+                    return navigationService;
+                });
+
+            builder.Services.AddScoped<MainWindowViewModel>();
+            builder.Services.AddScoped<EmployeeViewModel>();
+            builder.Services.AddScoped<EmployeeCreateViewModel>();
+
+            builder.Services.AddTransient(sp => new MainWindow() { DataContext = sp.GetRequiredService<MainWindowViewModel>() });
+            builder.Services.AddTransient(sp => new EmployeeView() { DataContext = sp.GetRequiredService<EmployeeViewModel>() });
+            builder.Services.AddTransient(sp => new EmployeeCreateView() { DataContext = sp.GetRequiredService<EmployeeCreateViewModel>() });
 
             _host = builder.Build();
         }

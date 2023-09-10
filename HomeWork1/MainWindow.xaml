@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeWork1.ViewModels"
         mc:Ignorable="d"
-        Title="Сотрудники" Height="620" Width="600"
+        Title="Сотрудники" Height="670" Width="600"
         ResizeMode="NoResize">    
     <Grid>
         <StackPanel Orientation="Vertical">
@@ -22,6 +22,7 @@
                            Margin="2"
                            VerticalAlignment="Center">Введіть кількість співробітників</TextBlock>
                 <TextBox x:Name="CountInput"
+                         Text="{Binding CountInput, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                          Width="150"
                          Background="LightGray"
                          FontSize="14"
@@ -32,7 +33,7 @@
                         Padding="5,2,5,2"
                         VerticalAlignment="Center"
                         Background="LightBlue"
-                        />
+                        Command="{Binding LoadFromApiCommand, Mode=OneTime}"/>
             </WrapPanel>            
             <ListBox Name="ListEmployees"                    
                      ItemsSource="{Binding EmployeeViewItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -79,7 +80,11 @@
             <Button Content="Подивитися"
                     Margin="10"
                     Height="40"
-                    />
+                    Command="{Binding ShowInformCommand, Mode=OneTime}"/>
+            <Button Content="Создать"
+                    Margin="10"
+                    Height="40"
+                    Command="{Binding CreateEmployeeCommand, Mode=OneTime}"/>
         </StackPanel>
     </Grid>
 </Window>

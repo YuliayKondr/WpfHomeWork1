@@ -1,0 +1,265 @@
+﻿<Window x:Class="HomeWork1.Views.EmployeeCreateView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HomeWork1.Views"
+        mc:Ignorable="d"
+        Title="Створення співробітника" Height="620" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>          
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.1*"/>
+            <RowDefinition Height="0.9*" />
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Grid.Column="0" Margin="15">
+            <GroupBox.Header>
+                <Label>Загальна інформація</Label>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="2.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Margin="2,2,2,2"
+                               FontSize="15"
+                               HorizontalAlignment="Right"
+                               Foreground="Blue">Фамілія</TextBlock>
+                <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Margin="2,2,2,2"
+                               FontSize="15"
+                               HorizontalAlignment="Right"
+                               Foreground="Blue">Ім'я</TextBlock>
+
+                <TextBlock Grid.Column="0"
+                               Grid.Row="2" 
+                               Margin="2,2,2,2"
+                               FontSize="15" 
+                               Foreground="Blue"
+                               Text="Email"
+                               HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="0"
+                               Grid.Row="3"
+                               Margin="2,2,2,2"
+                               FontSize="15" 
+                               Foreground="Blue"
+                               HorizontalAlignment="Right"
+                               Text="Стать"/>
+
+                <TextBlock Grid.Column="0"
+                               Grid.Row="4"
+                               Margin="2,2,2,2"
+                               FontSize="15"
+                               HorizontalAlignment="Right"
+                               Foreground="Blue">Id</TextBlock>
+
+                <TextBox Grid.Column="1"
+                             Grid.Row="0"                              
+                             Margin="2,2,2,2" FontSize="12"
+                             Foreground="DarkBlue"             
+                             Text="{Binding Employee.LastName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Column="1"
+                             Grid.Row="1" 
+                             Margin="2,2,2,2"
+                             FontSize="12"
+                             Foreground="DarkBlue" 
+                             x:Name="NameTextBlock"
+                             Text="{Binding Employee.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+
+                <TextBox Grid.Column="1"
+                             Grid.Row="2" 
+                             Margin="2,2,2,2"
+                             FontSize="12"
+                             Foreground="Blue"
+                             Text="{Binding Employee.Email, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Column="1"
+                             Grid.Row="4" 
+                             Margin="2,2,2,2"
+                             FontSize="12"
+                             Foreground="Blue"
+                             Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <ComboBox Grid.Column="1"
+                         Grid.Row="3"
+                         ItemsSource="{Binding Genders, Mode=OneWay}"
+                         SelectedItem="{Binding Employee.Gender, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
+                         Margin="2,2,2,2"
+                         FontSize="12"
+                         Foreground="Blue">
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="0" Grid.Column="1" Margin="15">
+            <GroupBox.Header>
+                <Label>Відомості про адресу</Label>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"                    
+                    Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" HorizontalAlignment="Right"
+                           Text="Країна"/>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" HorizontalAlignment="Right"
+                            Text="Місто"/>
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" HorizontalAlignment="Right"
+                            Text="Назва вулиці"/>
+                <TextBlock Grid.Row="3"
+                           Grid.Column="0" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" HorizontalAlignment="Right"
+                            Text="Адреса"/>
+                <TextBlock Grid.Row="4"
+                           Grid.Column="0" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" HorizontalAlignment="Right"
+                            Text="Телефон"/>
+
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"                    
+                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" x:Name="CountryTextBlock"
+                           Text="{Binding Employee.Country, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Row="1"
+                           Grid.Column="1" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen"
+                           Text="{Binding Employee.City, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Row="2"
+                           Grid.Column="1" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" 
+                            Text="{Binding Employee.StreetName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" 
+                         Text="{Binding Employee.StreetAddress,  Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Grid.Row="4"
+                         Grid.Column="1"
+                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" x:Name="PhoneNumerTextBlock"
+                         Text="{Binding Employee.PhoneNumer,  Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </Grid>     
+         
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="15">
+            <GroupBox.Header>
+                <Label>Відомості про роботу</Label>
+            </GroupBox.Header>
+            <StackPanel>
+                <Label FontSize="10">Назва</Label>
+                <TextBox Margin="2,0,2,0" FontSize="15"
+                             Text="{Binding Employee.Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <Label FontSize="10">Ключовий скілл</Label>
+                <TextBox Margin="2,0,2,0" FontSize="15"
+                             Text="{Binding Employee.KeySkill, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </StackPanel>
+        </GroupBox>          
+        <GroupBox Grid.Row="1" Grid.Column="1" Margin="15">
+            <GroupBox.Header>
+                <Label>Банківські картка</Label>
+            </GroupBox.Header>
+            <TextBox Margin="2,0,2,0" FontSize="15" MaxHeight="20"
+                     VerticalAlignment="Top"
+                     Text="{Binding Employee.CcNumber, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+        </GroupBox>
+
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>            
+            <Image Grid.Column="0" Grid.Row="0"
+                   Width="100" Source="{Binding Path=Employee.Avatar, Mode=OneWay}"/>
+            
+            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical"                        >
+                <Label FontSize="10">Ссилка на Фото</Label>
+                <TextBox Margin="2,2,2,2" FontSize="12"                    
+                         Padding="2"
+                         Text="{Binding Employee.Avatar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label FontSize="10">Логин</Label>
+                <TextBox Margin="2,0,2,0" FontSize="14"
+                               Text="{Binding Employee.Username, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </StackPanel>
+        </Grid>
+
+        <GroupBox Grid.Row="2" Grid.Column="1" Margin="5"> 
+            <GroupBox.Header>
+                <Label>Відомості про тарифний план</Label>
+            </GroupBox.Header>
+            <StackPanel>
+                <Label FontSize="10">Тарифний план</Label>
+                <ComboBox ItemsSource="{Binding Plans, Mode=OneWay}"
+                         SelectedItem="{Binding Employee.Plan, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
+                         Margin="2,2,2,2"
+                         FontSize="12"
+                         Height="18"
+                         Foreground="DarkBlue"></ComboBox>
+
+                <Label FontSize="10">Термін</Label>
+                <ComboBox ItemsSource="{Binding Terms, Mode=OneWay}"
+                         SelectedItem="{Binding Employee.Term, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
+                         Margin="2,2,2,2"
+                         FontSize="12"
+                         Height="18"
+                         Foreground="DarkBlue"></ComboBox>
+
+                <Label FontSize="10">Метод розрахунку</Label>
+                <ComboBox ItemsSource="{Binding PaymentMethods, Mode=OneWay}"
+                         SelectedItem="{Binding Employee.PaymentMethod, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
+                         Margin="2,2,2,2"
+                         FontSize="12"
+                         Height="17"
+                         Foreground="DarkBlue"></ComboBox>                
+            </StackPanel>            
+        </GroupBox>
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Foreground="Green"
+                   Text="Сохранено"
+                   FontSize="12"
+                   Margin="10 0 0 0"
+                   VerticalAlignment="Center"
+                   Visibility="{Binding Visible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <WrapPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                   Visibility="{Binding VisibleCommand, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button Content="Ок"
+                    Margin="10"
+                    Background="DarkGray"
+                    Foreground="White"
+                    FontSize="20"
+                    Width="100"
+                    Command="{Binding SaveNewEmployeeCommand}"/>
+            <Button Content="Отмена" 
+                    Margin="10"
+                    Background="DarkGray"
+                    Foreground="White"
+                    FontSize="20"
+                    Width="100"
+                    Click="ButtonClickClose"/>
+        </WrapPanel>
+    </Grid>
+</Window>

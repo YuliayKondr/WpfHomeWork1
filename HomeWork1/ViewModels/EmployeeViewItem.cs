@@ -1,20 +1,27 @@
 ﻿using HomeWork1.AppCommon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HomeWork1.ViewModels
 {
     public class EmployeeViewItem : BaseNotifyPropertyChanged
     {
+        private int _id;
         private string _avatar;
         private string _name;
         private string _email;
         private string _lastName;
+        private string _title;
 
-        public string Title { get; set; }
+        public int Id
+        {
+            get => _id;
+            set => SetAndNotifieIfChanged(ref _id, value);
+        }
+
+        public string Title 
+        {
+            get => _title;
+            set => SetAndNotifieIfChanged(ref _title, value); 
+        }
 
         public string Avatar 
         {
@@ -30,7 +37,7 @@ namespace HomeWork1.ViewModels
 
         public string LastName 
         { 
-            get => LastName;
+            get => _lastName;
             set => SetAndNotifieIfChanged(ref _lastName, value); 
         }
 

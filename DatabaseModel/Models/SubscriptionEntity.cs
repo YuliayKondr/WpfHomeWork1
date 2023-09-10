@@ -8,6 +8,19 @@ namespace DatabaseModel.Models
 {
     public class SubscriptionEntity
     {
+        public SubscriptionEntity(string plan, string status, string paymentMethod, string term)
+        {
+            Plan = plan;
+            Status = status;
+            PaymentMethod = paymentMethod;
+            Term = term;
+        }
+
+        public SubscriptionEntity()
+        {
+            
+        }
+
         public int Id { get; protected set; }
 
         //public int EmployeeId { get; protected set; }

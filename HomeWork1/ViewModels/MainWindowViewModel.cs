@@ -8,30 +8,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HomeWork1.EmployeeDirectory;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Windows;
 using TransferObjects.Employee;
-using System.ComponentModel;
 using HomeWork1.AppCommon;
 using HomeWork1.AppCommon.MvvmComands;
 using System.Collections.ObjectModel;
+using HomeWork1.Views;
 
 namespace HomeWork1.ViewModels
 {
-    public class MainWindowViewModel : BaseNotifyPropertyChanged
-    {     
-
-        private ObservableCollection<EmployeeViewItem> _employeeViewItems;
-        private EmployeeViewItem _selectedEmployeeItem;
-
+    public sealed class MainWindowViewModel : BaseNotifyPropertyChanged, IActivable
+    {
         private readonly IEmployeeClient _employeeClient;
         private readonly IRepository<EmployeeEntity> _userEntityRepository;
         private readonly IRepository<AddressEntity> _addressRepository;
         private readonly IRepository<SubscriptionEntity> _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork1;
         private readonly IMapper _mapper;
+        private readonly INavigationService _navigationService;
+
+        private string _countInput;
+        private ObservableCollection<EmployeeViewItem> _employeeViewItems;
+        private EmployeeViewItem _selectedEmployeeItem;       
 
         public MainWindowViewModel(
             IEmployeeClient employeeClient,
@@ -39,7 +39,8 @@ namespace HomeWork1.ViewModels
             IRepository<EmployeeEntity> userRepository,
             IRepository<AddressEntity> addressRepository,
             IRepository<SubscriptionEntity> subscriptionRepository,
-            IMapper mapper)
+            IMapper mapper,
+            INavigationService navigationService)
 
         {
             _employeeClient = employeeClient;
@@ -48,12 +49,22 @@ namespace HomeWork1.ViewModels
             _addressRepository = addressRepository;
             _subscriptionRepository = subscriptionRepository;
             _mapper = mapper;
+            _navigationService = navigationService;
 
             LoadEmployeesCommand = new AsyncCommand(LoadEmployeesAsync);
-
+            LoadFromApiCommand = new AsyncCommand(LoadFromApi);
+            ShowInformCommand = new AsyncCommand(ShowInform);
+            CreateEmployeeCommand = new AsyncCommand(CreateEmployee);
         }
 
+
         public IAsyncCommand LoadEmployeesCommand { get; private set; }
+
+        public IAsyncCommand LoadFromApiCommand { get; private set; }
+
+        public IAsyncCommand ShowInformCommand { get; private set; }
+
+        public IAsyncCommand CreateEmployeeCommand { get; private set; }
 
         public ObservableCollection<EmployeeViewItem> EmployeeViewItems
         {
@@ -67,43 +78,29 @@ namespace HomeWork1.ViewModels
             set => SetAndNotifieIfChanged(ref _selectedEmployeeItem, value);
         }
 
-        private async Task LoadEmployeesAsync(CancellationToken cancellationToken)
+        public string CountInput
         {
-            IReadOnlyCollection<EmployeeEntity> employees = await _userEntityRepository.Queryable().ToArrayAsync(cancellationToken);
-
-            _employeeViewItems = new ObservableCollection<EmployeeViewItem>(employees.Select(x => _mapper.Map<EmployeeViewItem>(x)));
-
-            _selectedEmployeeItem = _employeeViewItems?.First();
+            get => _countInput;
+            set => SetAndNotifieIfChanged(ref _countInput, value);
         }
 
-        //todo переробка на viewmodel
-        /*private async void ShowInfoEnployee(object sender, RoutedEventArgs e)
-        {
-            if (ListEmployees.SelectedItem != null && ListEmployees.SelectedItem is EmployeeEntity)
+        private async Task LoadEmployeesAsync(CancellationToken cancellationToken)
+        { 
+            EmployeeViewItems = await GetEmployeesAsync(cancellationToken);
+
+            if(EmployeeViewItems.Any())
             {
-                EmployeeEntity selectedEmployee = (EmployeeEntity)ListEmployees.SelectedItem;
+                SelectedEmployeeItem = _employeeViewItems.First();
+            }            
+        }         
 
-                EmployeeView employeeView = new EmployeeView(_userEntityRepository, _addressRepository, _subscriptionRepository);
-
-                employeeView.EmployeeId = selectedEmployee.Id;
-
-                employeeView.ShowDialog();
-
-                ListEmployees.SelectedItem = null;
-            }
-            else
-            {
-                MessageBox.Show("Не вибраний об'єкт", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }      
-
-        private async void Load_Click(object sender, RoutedEventArgs e)
+        private async Task LoadFromApi(CancellationToken cancellationToken)
         {
-            if (!int.TryParse(CountInput.Text, out int countEmployees) || countEmployees < 1 || countEmployees > 10)
+            if (!int.TryParse(CountInput, out int countEmployees) || countEmployees < 1 || countEmployees > 10)
             {
                 MessageBox.Show("Введіть число від 1 до 10", "Кількість співробітників", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                CountInput.Text = string.Empty;
+                CountInput = string.Empty;
 
                 return;
             }
@@ -119,7 +116,7 @@ namespace HomeWork1.ViewModels
 
                     _userEntityRepository.Insert(userEntity);
 
-                    await _unitOfWork1.SaveChangesAsync(CancellationToken.None);
+                    await _unitOfWork1.SaveChangesAsync(cancellationToken);
 
                 }
                 else
@@ -130,17 +127,51 @@ namespace HomeWork1.ViewModels
 
                     Array.ForEach(employeeEntities, x => _userEntityRepository.Insert(x));
 
-                    await _unitOfWork1.SaveChangesAsync(CancellationToken.None);
-                }
+                    await _unitOfWork1.SaveChangesAsync(cancellationToken);
+                }                
 
-                ListEmployees.ItemsSource = await GetEmployeesAsync();
-
+                EmployeeViewItems = await GetEmployeesAsync(cancellationToken);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }*/
+        }
 
+        private async Task<ObservableCollection<EmployeeViewItem>> GetEmployeesAsync(CancellationToken cancellationToken)
+        {
+            IReadOnlyCollection<EmployeeEntity> employees = await _userEntityRepository.Queryable().ToArrayAsync(cancellationToken);
+
+            return new ObservableCollection<EmployeeViewItem>(employees.Select(x => _mapper.Map<EmployeeViewItem>(x)));
+        }
+
+        private async Task ShowInform(CancellationToken cancellationToken)
+        {
+
+            if (SelectedEmployeeItem != null)
+            {
+                await _navigationService.ShowAsync(nameof(EmployeeView), new ShowEmployeeInfoParameter(SelectedEmployeeItem.Id));
+
+                SelectedEmployeeItem = null;
+            }
+            else
+            {
+                MessageBox.Show("Не вибраний об'єкт", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }           
+        }
+
+        private async Task CreateEmployee(CancellationToken cancellationToken)
+        {
+
+            await _navigationService.ShowDialogAsync(nameof(EmployeeCreateView), null);
+
+            await LoadEmployeesAsync(cancellationToken);
+        }
+
+        public Task ActivateAsync(object parameter)
+        {
+            return Task.CompletedTask;
+            
+        }
     }
 }
