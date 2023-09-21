@@ -11,5 +11,7 @@ namespace HomeWork1.AppCommon.MvvmComands
     public interface IAsyncCommand : ICommand
     {
         Task ExecuteAsync(object? parameter);
+
+        bool IsExecuting { get; }
     }
 }

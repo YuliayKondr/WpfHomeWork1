@@ -1,0 +1,51 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Style x:Key="HeaderLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="DarkGray"/>
+    </Style>
+
+    <ControlTemplate x:Key="TextBlockCordeRadius" TargetType="TextBox">
+        <Border CornerRadius="4"
+                BorderThickness="1"
+                Padding="{TemplateBinding Padding}">
+            <ContentPresenter />
+        </Border>
+    </ControlTemplate>
+
+    <Style x:Key="TextBoxStyle" TargetType="TextBox">
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </Style.Resources>
+        <Setter Property="Padding" Value="5 5 5 0"/>
+        <Setter Property="FontSize" Value="15"/>
+    </Style>
+
+    <ControlTemplate x:Key="EllipseGroupBox" TargetType="GroupBox"> 
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"
+                    BorderThickness="0" 
+                    BorderBrush="White"
+                    CornerRadius="0 0 0 0">
+                <ContentPresenter ContentSource="Header"                        
+                                  RecognizesAccessKey="True" />               
+            </Border>
+            <Border Grid.Row="1" 
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="2"
+                    CornerRadius="15"
+                    Padding="2">
+                <ContentPresenter />
+            </Border>
+        </Grid> 
+    </ControlTemplate> 
+</ResourceDictionary>

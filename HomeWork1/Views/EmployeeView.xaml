@@ -5,7 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeWork1.Views"
         mc:Ignorable="d"
-        Title="Информація" Height="600" Width="800">
+        Title="Информація" Height="650" Width="800">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/EmployeeStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/MainStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -18,9 +26,9 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0" Margin="15">
+        <GroupBox Grid.Row="0" Grid.Column="0" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}" >
             <GroupBox.Header>
-                <Label>Загальна інформація</Label>
+                <Label Style="{StaticResource HeaderLabel}">Загальна інформація</Label>
             </GroupBox.Header>
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
@@ -35,9 +43,9 @@
                            Text="{Binding EmployeeViewItem.Gender, Mode=OneWay}"/>                
             </StackPanel>            
         </GroupBox>
-        <GroupBox Grid.Row="0" Grid.Column="1" Margin="15">
+        <GroupBox Grid.Row="0" Grid.Column="1" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
-                <Label>Відомості про адресу</Label>
+                <Label Style="{StaticResource HeaderLabel}">Відомості про адресу</Label>
             </GroupBox.Header>
             <StackPanel>
                 <TextBlock Margin="2,0,2,0" FontSize="15" Foreground="DarkGreen" x:Name="CountryTextBlock"
@@ -52,9 +60,9 @@
                             Text="{Binding EmployeeViewItem.PhoneNumer, Mode=OneWay}"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="1" Grid.Column="0" Margin="15">
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
-                <Label>Відомості про роботу</Label>
+                <Label Style="{StaticResource HeaderLabel}">Відомості про роботу</Label>
             </GroupBox.Header>
             <StackPanel>
                 <TextBlock Margin="2,0,2,0" FontSize="15" x:Name="TitleTextBlock"
@@ -63,18 +71,18 @@
                            Text="{Binding EmployeeViewItem.KeySkill, Mode=OneWay}"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="1" Grid.Column="1" Margin="15">
+        <GroupBox Grid.Row="1" Grid.Column="1" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
-                <Label>Банківські картки</Label>
+                <Label Style="{StaticResource HeaderLabel}">Банківські картки</Label>
             </GroupBox.Header>
             <StackPanel>
                 <TextBlock Margin="2,0,2,0" FontSize="15" x:Name="CcNumberTextBlock"
                            Text="{Binding EmployeeViewItem.CcNumber, Mode=OneWay}"/>             
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="15">
+        <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
-                <Label>Відомості про статус аккаунта</Label>
+                <Label Style="{StaticResource HeaderLabel}">Відомості про статус аккаунта</Label>
             </GroupBox.Header>
             <StackPanel Orientation="Horizontal">
                 <Image Width="100" x:Name="Foto" Source="{Binding Path=EmployeeViewItem.Avatar, Mode=OneWay}"/>
@@ -95,9 +103,11 @@
         <Button Content="Закрити"
                 Click="ButtonClickClose"
                 Grid.Row="3" Grid.ColumnSpan="2"
-                Margin="10"
+                Margin="10 0 10 0"
+                Height="35"
                 Background="DarkGray"
                 Foreground="White"
-                FontSize="20"/>
+                FontSize="10"
+                Template="{StaticResource EllipseButton}"/>
     </Grid>
 </Window>

@@ -5,9 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeWork1.Views"
         mc:Ignorable="d"
-        Title="Створення співробітника" Height="620" Width="800">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>          
+        Title="Створення співробітника" Height="660" Width="800" ResizeMode="NoResize">
+    <Window.Resources>        
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/MainStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/EmployeeStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,7 +27,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0" Margin="15">
+        <GroupBox Grid.Row="0" Grid.Column="0" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}" Padding="10">
             <GroupBox.Header>
                 <Label>Загальна інформація</Label>
             </GroupBox.Header>
@@ -74,13 +80,14 @@
 
                 <TextBox Grid.Column="1"
                              Grid.Row="0"                              
-                             Margin="2,2,2,2" FontSize="12"
+                             Margin="2,2,2,2"
                              Foreground="DarkBlue"             
+                             Style="{StaticResource TextBoxStyle}"
                              Text="{Binding Employee.LastName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Column="1"
                              Grid.Row="1" 
                              Margin="2,2,2,2"
-                             FontSize="12"
+                             Style="{StaticResource TextBoxStyle}"
                              Foreground="DarkBlue" 
                              x:Name="NameTextBlock"
                              Text="{Binding Employee.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
@@ -88,13 +95,13 @@
                 <TextBox Grid.Column="1"
                              Grid.Row="2" 
                              Margin="2,2,2,2"
-                             FontSize="12"
+                             Style="{StaticResource TextBoxStyle}"
                              Foreground="Blue"
                              Text="{Binding Employee.Email, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Column="1"
                              Grid.Row="4" 
                              Margin="2,2,2,2"
-                             FontSize="12"
+                             Style="{StaticResource TextBoxStyle}"
                              Foreground="Blue"
                              Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <ComboBox Grid.Column="1"
@@ -107,7 +114,7 @@
                 </ComboBox>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Row="0" Grid.Column="1" Margin="15">
+        <GroupBox Grid.Row="0" Grid.Column="1" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
                 <Label>Відомості про адресу</Label>
             </GroupBox.Header>
@@ -142,43 +149,43 @@
 
                 <TextBox Grid.Row="0"
                          Grid.Column="1"                    
-                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" x:Name="CountryTextBlock"
+                         Margin="2,2,2,2" Foreground="DarkGreen" x:Name="CountryTextBlock" Style="{StaticResource TextBoxStyle}"
                            Text="{Binding Employee.Country, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Row="1"
-                           Grid.Column="1" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen"
+                           Grid.Column="1" Margin="2,2,2,2" Foreground="DarkGreen" Style="{StaticResource TextBoxStyle}"
                            Text="{Binding Employee.City, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Row="2"
-                           Grid.Column="1" Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" 
+                           Grid.Column="1" Margin="2,2,2,2" Foreground="DarkGreen" Style="{StaticResource TextBoxStyle}"
                             Text="{Binding Employee.StreetName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Row="3"
                          Grid.Column="1"
-                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" 
+                         Margin="2,2,2,2" Foreground="DarkGreen" Style="{StaticResource TextBoxStyle}"
                          Text="{Binding Employee.StreetAddress,  Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBox Grid.Row="4"
                          Grid.Column="1"
-                         Margin="2,2,2,2" FontSize="15" Foreground="DarkGreen" x:Name="PhoneNumerTextBlock"
+                         Margin="2,2,2,2" Foreground="DarkGreen" Style="{StaticResource TextBoxStyle}"
                          Text="{Binding Employee.PhoneNumer,  Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             </Grid>     
          
         </GroupBox>
-        <GroupBox Grid.Row="1" Grid.Column="0" Margin="15">
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
                 <Label>Відомості про роботу</Label>
             </GroupBox.Header>
             <StackPanel>
                 <Label FontSize="10">Назва</Label>
-                <TextBox Margin="2,0,2,0" FontSize="15"
+                <TextBox Margin="2,2,2,2" Style="{StaticResource TextBoxStyle}"
                              Text="{Binding Employee.Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <Label FontSize="10">Ключовий скілл</Label>
-                <TextBox Margin="2,0,2,0" FontSize="15"
+                <TextBox Margin="2,2,2,2" Style="{StaticResource TextBoxStyle}"
                              Text="{Binding Employee.KeySkill, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             </StackPanel>
-        </GroupBox>          
-        <GroupBox Grid.Row="1" Grid.Column="1" Margin="15">
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="1" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}">
             <GroupBox.Header>
                 <Label>Банківські картка</Label>
             </GroupBox.Header>
-            <TextBox Margin="2,0,2,0" FontSize="15" MaxHeight="20"
+            <TextBox  Margin="2,2,2,2" Style="{StaticResource TextBoxStyle}"
                      VerticalAlignment="Top"
                      Text="{Binding Employee.CcNumber, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
         </GroupBox>
@@ -196,16 +203,16 @@
             
             <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical"                        >
                 <Label FontSize="10">Ссилка на Фото</Label>
-                <TextBox Margin="2,2,2,2" FontSize="12"                    
+                <TextBox Margin="2,2,2,2" Style="{StaticResource TextBoxStyle}"                  
                          Padding="2"
                          Text="{Binding Employee.Avatar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label FontSize="10">Логин</Label>
-                <TextBox Margin="2,0,2,0" FontSize="14"
+                <TextBox Margin="2,2,2,2" Style="{StaticResource TextBoxStyle}"
                                Text="{Binding Employee.Username, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             </StackPanel>
         </Grid>
 
-        <GroupBox Grid.Row="2" Grid.Column="1" Margin="5"> 
+        <GroupBox Grid.Row="2" Grid.Column="1" Margin="10 0 10 0" Template="{StaticResource EllipseGroupBox}"> 
             <GroupBox.Header>
                 <Label>Відомості про тарифний план</Label>
             </GroupBox.Header>
@@ -214,16 +221,14 @@
                 <ComboBox ItemsSource="{Binding Plans, Mode=OneWay}"
                          SelectedItem="{Binding Employee.Plan, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
                          Margin="2,2,2,2"
-                         FontSize="12"
-                         Height="18"
+                         FontSize="12"                         
                          Foreground="DarkBlue"></ComboBox>
 
                 <Label FontSize="10">Термін</Label>
                 <ComboBox ItemsSource="{Binding Terms, Mode=OneWay}"
                          SelectedItem="{Binding Employee.Term, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
                          Margin="2,2,2,2"
-                         FontSize="12"
-                         Height="18"
+                         FontSize="12"                         
                          Foreground="DarkBlue"></ComboBox>
 
                 <Label FontSize="10">Метод розрахунку</Label>
@@ -231,7 +236,6 @@
                          SelectedItem="{Binding Employee.PaymentMethod, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"    
                          Margin="2,2,2,2"
                          FontSize="12"
-                         Height="17"
                          Foreground="DarkBlue"></ComboBox>                
             </StackPanel>            
         </GroupBox>
@@ -252,14 +256,16 @@
                     Foreground="White"
                     FontSize="20"
                     Width="100"
-                    Command="{Binding SaveNewEmployeeCommand}"/>
+                    Command="{Binding SaveNewEmployeeCommand}"
+                    Template="{StaticResource EllipseButton}"/>
             <Button Content="Отмена" 
                     Margin="10"
                     Background="DarkGray"
                     Foreground="White"
                     FontSize="20"
                     Width="100"
-                    Click="ButtonClickClose"/>
+                    Click="ButtonClickClose"
+                    Template="{StaticResource EllipseButton}"/>
         </WrapPanel>
     </Grid>
 </Window>

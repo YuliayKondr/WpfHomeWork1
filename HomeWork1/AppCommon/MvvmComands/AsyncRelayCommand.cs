@@ -13,13 +13,22 @@ namespace HomeWork1.AppCommon.MvvmComands
         private readonly Func<CancellationToken, Task<TResult>> _command;
         private readonly CancelAsyncCommand _cancelCommand;
         private NotifyTaskRelayCompletion<TResult> _execution;
+        private volatile bool _isExecuting;
 
         public NotifyTaskRelayCompletion<TResult> Execution
         {
             get => _execution;
             private set => SetAndNotifieIfChanged(ref _execution, value);
         }
-        public ICommand CancelCommand => _cancelCommand;
+
+        public override bool IsExecuting
+        {
+            get { return _isExecuting; }
+            protected set { SetAndNotifieIfChanged(ref _isExecuting, value); }
+
+        }
+
+        public ICommand CancelCommand => _cancelCommand;        
 
         public AsyncRelayCommand(Func<CancellationToken, Task<TResult>> command)
         {
@@ -29,12 +38,18 @@ namespace HomeWork1.AppCommon.MvvmComands
         public override async Task ExecuteAsync(object parameter)
         {
             _cancelCommand.NotifyCommandStarting();
+            IsExecuting = _cancelCommand.IsExecuting;
             Execution = new NotifyTaskRelayCompletion<TResult>(_command(_cancelCommand.Token));
 
             RaiseCanExecuteChanged();
-            await Execution.TaskCompletion;
+            
+            await Execution.TaskCompletion;            
+
             _cancelCommand.NotifyCommandFinished();
+            IsExecuting = _cancelCommand.IsExecuting;
             RaiseCanExecuteChanged();
+
+
         }
 
         public override bool CanExecute(object? parameter)

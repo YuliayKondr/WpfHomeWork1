@@ -57,7 +57,7 @@ namespace HomeWork1.AppCommon.MvvmComands
             }
         }
 
-        public Task<TResult> Task { get; private set; }
+        public Task<TResult> Task { get; private set; }        
         public TResult? Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result : default;
         public TaskStatus Status => Task.Status;
         public bool IsCompleted => Task.IsCompleted;

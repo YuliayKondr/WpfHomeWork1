@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -11,13 +8,21 @@ namespace HomeWork1.AppCommon.MvvmComands
     public sealed class CancelAsyncCommand : RelayComandAsyncBase
     {
         private CancellationTokenSource _cts = new CancellationTokenSource();
-        private bool _commandExecuting;
-
+        private volatile bool _commandExecuting;
+        
         public event EventHandler? CanExecuteChanged;
         public CancellationToken Token { get { return _cts.Token; } }
+
+        public override bool IsExecuting
+        {
+            get { return _commandExecuting; }
+            protected set { SetAndNotifieIfChanged(ref _commandExecuting, value); }
+
+        }
+
         public void NotifyCommandStarting()
         {
-            _commandExecuting = true;
+            IsExecuting = true;            
             if (!_cts.IsCancellationRequested)
                 return;
             _cts = new CancellationTokenSource();
@@ -26,8 +31,8 @@ namespace HomeWork1.AppCommon.MvvmComands
 
         public void NotifyCommandFinished()
         {
-            _commandExecuting = false;
-            RaiseCanExecuteChanged();
+            IsExecuting = false;
+            RaiseCanExecuteChanged();            
         }
 
         public override bool CanExecute(object? parameter)

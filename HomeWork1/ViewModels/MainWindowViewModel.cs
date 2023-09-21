@@ -85,7 +85,8 @@ namespace HomeWork1.ViewModels
         }
 
         private async Task LoadEmployeesAsync(CancellationToken cancellationToken)
-        { 
+        {
+            await Task.Delay(2000);
             EmployeeViewItems = await GetEmployeesAsync(cancellationToken);
 
             if(EmployeeViewItems.Any())

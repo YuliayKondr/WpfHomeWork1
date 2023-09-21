@@ -16,6 +16,9 @@ namespace HomeWork1.AppCommon.MvvmComands
         }
 
         public abstract bool CanExecute(object? parameter);
+
+        public abstract bool IsExecuting { get; protected set; }
+
         public abstract Task ExecuteAsync(object parameter);
 
         public async void Execute(object? parameter)

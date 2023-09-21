@@ -5,23 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HomeWork1.ViewModels"
         mc:Ignorable="d"
-        Title="Сотрудники" Height="670" Width="600"
-        ResizeMode="NoResize">    
+        Title="Сотрудники"
+        Height="680" 
+        Width="600"
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/MainStyles.xaml"/>
+                <ResourceDictionary Source="/Styles/Loading.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>           
+        </ResourceDictionary>
+    </Window.Resources>    
     <Grid>
+        <Grid Panel.ZIndex="100"
+              Visibility="{Binding LoadEmployeesCommand.IsExecuting, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border
+                Background="DarkBlue"
+                Opacity="0.4"/>
+            <Image Style="{StaticResource LoadingImage}">
+                <Image.RenderTransform>
+                    <RotateTransform x:Name="ElipseRotate"
+                                 Angle="0" 
+                                CenterX="25" 
+                                CenterY="25"/>
+                </Image.RenderTransform>
+                <Image.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="ElipseRotate"
+                                         Storyboard.TargetProperty="Angle"
+                                         Duration="0:0:1"
+                                         From="0" To="360"
+                                         AutoReverse="False"
+                                         RepeatBehavior="Forever">
+
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Image.Triggers>
+            </Image>
+        </Grid>
+        
         <StackPanel Orientation="Vertical">
             <Button Content="Завантажити з бази"
-                    Margin="10,5,10,5"
-                    Background="DarkGray"
-                    Foreground="White"
-                    FontSize="12"
+                    Margin="10,5,10,5"    
+                    FontSize="10"
+                    Height="35"
                     Padding="4"
-                    Command="{Binding LoadEmployeesCommand, Mode=OneTime}"></Button>
-            
-            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock FontSize="14"
+                    Command="{Binding LoadEmployeesCommand, Mode=OneTime}"
+                    Template="{StaticResource EllipseButton}">
+                
+            </Button>
+
+            <GroupBox Header="Завантажити з Апі">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="14"
                            Margin="2"
                            VerticalAlignment="Center">Введіть кількість співробітників</TextBlock>
-                <TextBox x:Name="CountInput"
+                    <TextBox x:Name="CountInput"
                          Text="{Binding CountInput, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                          Width="150"
                          Background="LightGray"
@@ -29,62 +74,43 @@
                          TextAlignment="Right"
                          VerticalAlignment="Center"
                          Margin="10,0,10,0"/>
-                <Button Content="Завантажити з апі"
+                    <Button Content="Завантажити"                            
                         Padding="5,2,5,2"
                         VerticalAlignment="Center"
-                        Background="LightBlue"
-                        Command="{Binding LoadFromApiCommand, Mode=OneTime}"/>
+                        Width="150"
+                        HorizontalAlignment="Stretch"                           
+                        Command="{Binding LoadFromApiCommand, Mode=OneTime}"
+                        Style="{StaticResource FuchsiaButtonStyle}"/>
+                </StackPanel>
+                
+            </GroupBox>
+            
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                
+                
             </WrapPanel>            
             <ListBox Name="ListEmployees"                    
                      ItemsSource="{Binding EmployeeViewItems, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                      SelectedItem="{Binding SelectedEmployeeItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Margin="10,5,10,5"
                      Height="450"
-                     Background="LightGray"
-                     ScrollViewer.VerticalScrollBarVisibility="Visible">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="5" Orientation="Horizontal">
-                            <Image Width="100" Height="75" Source="{Binding Path=Avatar}" />
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Orientation="Horizontal"
-                                            Grid.Row="0">
-                                    <TextBlock Margin="10" 
-                                               FontSize="16" 
-                                               Text="{Binding Path=Name}" 
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Margin="10" 
-                                               FontSize="16" 
-                                               Text="{Binding Path=LastName}" 
-                                               HorizontalAlignment="Center" />
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                    <TextBlock Margin="10" 
-                                               FontSize="16" 
-                                               Text="{Binding Path=Title}" 
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Margin="10" 
-                                               FontSize="16" 
-                                               Text="{Binding Path=Email}" 
-                                               HorizontalAlignment="Center" />
-                                </StackPanel>    
-                            </Grid>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                     Background="White"                     
+                     ScrollViewer.VerticalScrollBarVisibility="Visible"                    
+                     ItemContainerStyle="{StaticResource MainListBoxItem}"
+                     ItemTemplate="{StaticResource MainListBoxItemTemplate}">                               
             </ListBox>
-            <Button Content="Подивитися"
-                    Margin="10"
-                    Height="40"
-                    Command="{Binding ShowInformCommand, Mode=OneTime}"/>
+            <Button Content="Подивитися"                    
+                    Margin="5"
+                    Height="35"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding ShowInformCommand, Mode=OneTime}"
+                    Template="{StaticResource EllipseButton}"/>
             <Button Content="Создать"
-                    Margin="10"
-                    Height="40"
-                    Command="{Binding CreateEmployeeCommand, Mode=OneTime}"/>
+                    Margin="5"
+                    Height="35"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding CreateEmployeeCommand, Mode=OneTime}"
+                    />
         </StackPanel>
     </Grid>
 </Window>
