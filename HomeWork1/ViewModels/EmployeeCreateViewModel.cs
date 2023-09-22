@@ -1,8 +1,10 @@
-﻿using DatabaseModel;
+﻿using AutoMapper;
+using DatabaseModel;
 using DatabaseModel.Models;
 using DatabaseModel.Repositories;
 using HomeWork1.AppCommon;
 using HomeWork1.AppCommon.MvvmComands;
+using HomeWork1.Clients;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TransferObjects.Employee;
 
 namespace HomeWork1.ViewModels
 {
@@ -18,9 +21,13 @@ namespace HomeWork1.ViewModels
         private readonly IRepository<EmployeeEntity> _repository;
         private readonly IRepository<SubscriptionEntity> _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork1;
+        private readonly IEmployeeClient _employeeClient;
+        private readonly IMapper _mapper;
 
         private FullEmployeeViewItem _fullEmployeeViewItem;
         private bool _visible;
+        private bool _visibleError;
+        private bool _isEnabledCommand;
         private string _id;
         private IReadOnlyCollection<string> _genders;
         private IReadOnlyCollection<string> _plans;
@@ -30,17 +37,21 @@ namespace HomeWork1.ViewModels
         public EmployeeCreateViewModel(
             IRepository<EmployeeEntity> repository,
             IRepository<SubscriptionEntity> subscriptionRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IEmployeeClient employeeClient,
+            IMapper mapper)
         {
             _subscriptionRepository = subscriptionRepository;
             _unitOfWork1 = unitOfWork;
             _repository = repository;
-
-            Employee = new FullEmployeeViewItem();
-            Employee.Status = "Active";
+            _employeeClient = employeeClient;
+            _mapper = mapper;                      
 
             SaveNewEmployeeCommand = new AsyncCommand(SaveNewEmployeeAsync);
+            LoadCommand = new AsyncCommand(LoadAsync);
         }
+
+        #region INPC
 
         public IReadOnlyCollection<string> Genders
         {
@@ -80,10 +91,17 @@ namespace HomeWork1.ViewModels
             
         }
 
-        public bool VisibleCommand
+        public bool VisibleError
         {
-            get => !Visible;
-            set => SetAndNotifieIfChanged(ref _visible, value);
+            get => _visibleError;
+            set => SetAndNotifieIfChanged(ref _visibleError, value);
+
+        }
+
+        public bool IsEnabledCommand
+        {
+            get => _isEnabledCommand;
+            set => SetAndNotifieIfChanged(ref _isEnabledCommand, value);
 
         }
 
@@ -93,7 +111,11 @@ namespace HomeWork1.ViewModels
             set => SetAndNotifieIfChanged(ref _id, value);
         }
 
+        #endregion
+
         public IAsyncCommand SaveNewEmployeeCommand { get; }
+
+        public IAsyncCommand LoadCommand { get; }
 
         public async Task ActivateAsync(object parameter)
         { 
@@ -101,6 +123,10 @@ namespace HomeWork1.ViewModels
             PaymentMethods = await GetPaymentMethodAsync();
             Terms = await GetTermsAsync();
             Plans = await GetPlansAsync();
+            Employee = new FullEmployeeViewItem();
+            Employee.Status = "Active";
+            Id = string.Empty;
+            IsEnabledCommand = true;
         }
 
         private async Task<IReadOnlyCollection<string>> GetAllGendersAsync()
@@ -220,9 +246,29 @@ namespace HomeWork1.ViewModels
 
             Employee.Id = int.Parse(Id);
 
+            EmployeeEntity? createdEmployee = await _repository.Queryable().FirstOrDefaultAsync(x => x.Id ==  Employee.Id);
+
+            if(createdEmployee != null)
+            {
+                VisibleError = true;
+                Visible = false;
+
+                return;
+            }
+
             await SaveAsync(cancellationToken);
 
             Visible = true;
+            IsEnabledCommand = false;
+        }
+
+        private async Task LoadAsync(CancellationToken cancellationToken)
+        {
+            EmployeeDto employee = await _employeeClient.GetEmployeeAsync();
+
+            Employee =  _mapper.Map<FullEmployeeViewItem>(_mapper.Map<EmployeeEntity>(employee));
+
+            Id = employee.Id.ToString();
         }
 
         private IEnumerable<string> Validation()
@@ -317,7 +363,7 @@ namespace HomeWork1.ViewModels
         {
             EmployeeEntity employeeEntity = new EmployeeEntity(
                 Guid.NewGuid().ToString(),
-                 Employee.Username.ToLower(),
+                Employee.Username.ToLower(),
                 Employee.Name,
                 Employee.LastName,
                 Employee.Username,
@@ -325,7 +371,7 @@ namespace HomeWork1.ViewModels
                 Employee.Avatar,
                 Employee.Gender,
                 Employee.PhoneNumer,
-                string.Empty,
+                Employee.SocialInsuranceNumber,
                 new Employment() { Title = Employee.Title, KeySkill = Employee.KeySkill },
                 new CreditCard() { CcNumber = Employee.CcNumber });
 

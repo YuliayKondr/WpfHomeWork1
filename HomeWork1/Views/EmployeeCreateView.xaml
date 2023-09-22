@@ -98,12 +98,26 @@
                              Style="{StaticResource TextBoxStyle}"
                              Foreground="Blue"
                              Text="{Binding Employee.Email, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-                <TextBox Grid.Column="1"
-                             Grid.Row="4" 
+
+                <Grid Grid.Column="1" Grid.Row="4" VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>                        
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Row="0"
                              Margin="2,2,2,2"
                              Style="{StaticResource TextBoxStyle}"
                              Foreground="Blue"
+                             VerticalAlignment="Stretch"
                              Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                    <Button Grid.Column="1" 
+                            Template="{StaticResource EllipseButton}"
+                            Command="{Binding LoadCommand}">Load</Button>
+                </Grid>
+                
                 <ComboBox Grid.Column="1"
                          Grid.Row="3"
                          ItemsSource="{Binding Genders, Mode=OneWay}"
@@ -248,21 +262,33 @@
                    VerticalAlignment="Center"
                    Visibility="{Binding Visible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <WrapPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
-                   Visibility="{Binding VisibleCommand, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   Foreground="Red"
+                   Text="Вже існує спіробітник з таким id"
+                   FontSize="12"
+                   Margin="10 0 0 0"
+                   VerticalAlignment="Center"
+                   Visibility="{Binding VisibleError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <WrapPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Ок"
                     Margin="10"
                     Background="DarkGray"
                     Foreground="White"
-                    FontSize="20"
+                    FontSize="10"
                     Width="100"
+                    Height="28"
                     Command="{Binding SaveNewEmployeeCommand}"
-                    Template="{StaticResource EllipseButton}"/>
+                    Template="{StaticResource EllipseButton}"
+                    IsEnabled="{Binding IsEnabledCommand, Mode=OneWay}">               
+            </Button>
             <Button Content="Отмена" 
                     Margin="10"
                     Background="DarkGray"
                     Foreground="White"
-                    FontSize="20"
+                    FontSize="10"
+                    Height="28"
                     Width="100"
                     Click="ButtonClickClose"
                     Template="{StaticResource EllipseButton}"/>

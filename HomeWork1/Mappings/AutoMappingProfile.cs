@@ -41,7 +41,6 @@ namespace HomeWork1.Mappings
                 .ForMember(x => x.Plan, y => y.MapFrom(x => x.Subscription.Plan))
                 .ForMember(x => x.Term, y => y.MapFrom(x => x.Subscription.Term))
                 .ForMember(x => x.PaymentMethod, y => y.MapFrom(x => x.Subscription.PaymentMethod));
-
         }
     }
 }

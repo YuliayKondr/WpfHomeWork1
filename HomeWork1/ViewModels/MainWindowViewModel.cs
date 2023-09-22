@@ -31,7 +31,7 @@ namespace HomeWork1.ViewModels
 
         private string _countInput;
         private ObservableCollection<EmployeeViewItem> _employeeViewItems;
-        private EmployeeViewItem _selectedEmployeeItem;       
+        private EmployeeViewItem _selectedEmployeeItem;             
 
         public MainWindowViewModel(
             IEmployeeClient employeeClient,
@@ -82,7 +82,7 @@ namespace HomeWork1.ViewModels
         {
             get => _countInput;
             set => SetAndNotifieIfChanged(ref _countInput, value);
-        }
+        }        
 
         private async Task LoadEmployeesAsync(CancellationToken cancellationToken)
         {

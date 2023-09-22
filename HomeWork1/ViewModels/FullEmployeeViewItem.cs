@@ -20,7 +20,8 @@ namespace HomeWork1.ViewModels
         private string _status;
         private string _plan;
         private string _paymentMethod;
-        private string _term;        
+        private string _term;
+        private string _socialInsuranceNumber;
 
         public string Gender
         {
@@ -98,6 +99,12 @@ namespace HomeWork1.ViewModels
         {
             get => _term;
             set => SetAndNotifieIfChanged(ref _term, value);
+        }
+
+        public string SocialInsuranceNumber
+        {
+            get => _socialInsuranceNumber;
+            set => SetAndNotifieIfChanged(ref _socialInsuranceNumber, value);
         }
     }
 }
